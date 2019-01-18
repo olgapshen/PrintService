@@ -1,33 +1,39 @@
 package domain;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-@JacksonXmlRootElement(localName = "Job")
-public class Job {
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "jobs")
+public class Job implements Serializable {
+
+    @JacksonXmlProperty(isAttribute=true)
+    @Id
+    private String id;
 
     @JacksonXmlProperty
-    private String type;
+    @Column
+    private Type type;
 
     @JacksonXmlProperty
+    @Transient
     private String user;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_name")
+    private User userRef;
+
     @JacksonXmlProperty
+    @Column
     private String device;
 
     @JacksonXmlProperty
+    @Column
     private int amount;
 
-    public Job() {}
-
-    public Job(String type, String user, String device, int amount) {
-        this.type = type;
-        this.amount = amount;
-        this.device = device;
-        this.user = user;
-    }
-
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
@@ -41,5 +47,17 @@ public class Job {
 
     public String getUser() {
         return user;
+    }
+
+    public User getUserObj() {
+        return userRef;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setUserRef(User user) {
+        this.userRef = user;
     }
 }
